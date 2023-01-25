@@ -47,7 +47,8 @@ unsigned char* get_secret(EC_KEY* key, const EC_POINT* peer_pub_key, size_t* sec
 
 struct s_msg {
 	int sender_id;
-	unsigned char* message;
+	int recipient_id;
+	unsigned char* message; // 16 bytes
 };
 
 struct s_env {
@@ -92,38 +93,53 @@ void free_env(struct s_env env) {
 	}
 	free(env.senders_priv);
 	free(env.senders_pub);
+	env.senders_count = 0;
+	for(int i = 0; i < env.messages_count; i++) {
+		free_msg(*env.messages[i]);
+	}
+	free(env.messages);
+	env.messages_count = 0;
 }
 
-void create_messages(int amount, int pertinent_amount) {
+void free_msg(struct s_msg msg) {
+	free(msg.message);
+}
+
+struct s_msg* create_messages(int amount, int pertinent_amount, struct s_env* env) {
 	// generate random indexes for pertinent messages
 	int* indexes = malloc(sizeof(int)*pertinent_amount);
 	for(int i = 0; i < pertinent_amount; i++) {
 		indexes[i] = rand() % amount;
 	}
+
+	// create messages
+	struct s_msg* messages = malloc(sizeof(struct s_msg)*amount);
+	for(int i = 0; i < amount; i++) {
+		messages[i].sender_id = rand() % env->senders_count;
+		messages[i].recipient_id = rand() % env->senders_count;
+		size_t secret_len;
+		unsigned char* secret = get_secret(env->senders_priv[messages[i].sender_id], env->senders_pub[messages[i].recipient_id], &secret_len);
+		unsigned char message[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+		messages[i].message = aes_encrypt(message, secret, secret_len);
+	}
 }
 
-int create_shared_secret(int nid) {
-	EC_KEY* alice = create_key(nid);
-	EC_KEY* bob = create_key(nid);
-	assert(alice != NULL && bob != NULL);
+// message has to be 16 bytes long
+unsigned char* aes_encrypt(unsigned char* message, unsigned char* password, int password_len) {
+	// derive key and IV from password for AES-128-CBC
+	unsigned char key[16];
+	unsigned char iv[16];
+	EVP_BytesToKey(EVP_aes_128_cbc(), EVP_sha256(), NULL, password, password_len, 1, key, iv);
 
-	const EC_POINT *alice_public = EC_KEY_get0_public_key(alice);
-	const EC_POINT *bob_public = EC_KEY_get0_public_key(bob);
+	// encrypt message (16 bytes) - no salt, no padding
+	unsigned char* ciphertext = malloc(16);
+	EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+	EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv);
+	EVP_EncryptUpdate(ctx, ciphertext, NULL, message, 16);
+	EVP_EncryptFinal_ex(ctx, ciphertext, NULL);
+	EVP_CIPHER_CTX_free(ctx);
 
-	size_t alice_secret_len;
-	size_t bob_secret_len;
-
-	unsigned char *alice_secret = get_secret(alice, bob_public, &alice_secret_len);
-	unsigned char *bob_secret = get_secret(bob, alice_public, &bob_secret_len);
-
-	printf("Secret length: %d\n", alice_secret_len);
-
-	EC_KEY_free(alice);
-	EC_KEY_free(bob);
-	OPENSSL_free(alice_secret);
-	OPENSSL_free(bob_secret);
-
-	return 0;
+	return ciphertext;
 }
 
 #define BENCH(nid) bench(nid,#nid)
