@@ -126,6 +126,11 @@ int compare(const void *a, const void *b) { // comparator for qsort
 	return (*aa > *bb) - (*aa < *bb);
 }
 
+int get_public_ley_length(EC_KEY* privkey, EC_POINT* pubkey) {
+	int len = EC_POINT_point2oct(EC_KEY_get0_group(privkey), pubkey, POINT_CONVERSION_COMPRESSED, NULL, 0, NULL);
+	return len;
+}
+
 // message has to be 16 bytes long
 unsigned char* aes_encrypt(unsigned char* message, unsigned char* password, int password_len, int* ciphertext_total_len) {
 	// derive key and IV from password for AES-128-CBC
@@ -288,6 +293,10 @@ void bench(int nid, char* curve_name) {
 	const int PERTINENT = 100;
 
 	printf("BENCHMARKING   %d agents; %d msgs; %d pertinent   using   %s curve\n", AGENTS, MESSAGES, PERTINENT, curve_name);
+	struct s_env env_temp = setup_keys(nid, 1); // key length
+	printf("Public key length: %d bytes\n", get_public_ley_length(env_temp.recipient_priv, env_temp.recipient_pub));
+	free_env(&env_temp);
+
 	setup_keys(nid, 10); // warmup
 
 	BENCH_ST(1);
