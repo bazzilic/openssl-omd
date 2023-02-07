@@ -1,0 +1,27 @@
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve
+keygen done in 33.817000 ms
+msggen done in 30751.579000 ms
+11 non-pertinent messages were mistakenly considered pertinent
+detect done in 30634.162000 ms
+ TOTAL done in 61419.612000 ms
+
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve
+keygen done in 98.547000 ms
+msggen done in 44537.525000 ms
+8 non-pertinent messages were mistakenly considered pertinent
+detect done in 44406.575000 ms
+ TOTAL done in 89042.697000 ms
+
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve
+keygen done in 94.462000 ms
+msggen done in 43886.508000 ms
+7 non-pertinent messages were mistakenly considered pertinent
+detect done in 43659.116000 ms
+ TOTAL done in 87640.135000 ms
+
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve
+keygen done in 19.197000 ms
+msggen done in 25866.597000 ms
+3 non-pertinent messages were mistakenly considered pertinent
+detect done in 25769.357000 ms
+ TOTAL done in 51655.196000 ms
