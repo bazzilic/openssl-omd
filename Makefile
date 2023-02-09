@@ -1,6 +1,11 @@
 CC ?= cc
 RM ?= rm -f
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+CFLAGS += -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include
+endif
+
 .PHONY: all clean
 
 all: ecdh-openssl

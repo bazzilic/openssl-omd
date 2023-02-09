@@ -1,13 +1,22 @@
 #include <assert.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 #include <openssl/ec.h>
 #include <openssl/ecdh.h>
 #include <openssl/evp.h>
 
+// GLOBAL PARAMETERS
+#define TOTAL_SENDERS 1000
+#define TOTAL_MESSAGES 500000
+#define PERTINENT_MESSAGES 100
+#define BENCH_ITERATIONS 150
+
 #define BENCH_ST(id) clock_t ___bench_clock_##id = clock()
-#define BENCH_END(id,name) printf("%s done in %f ms\n", name, (double)(clock() - ___bench_clock_##id) * 1000.0f / CLOCKS_PER_SEC)
+#define BENCH_END_SILENT(id) double ___bench_result_##id = (double)(clock() - ___bench_clock_##id) * 1000.0f / CLOCKS_PER_SEC
+#define BENCH_END(id,name) BENCH_END_SILENT(id); printf("%s done in %f ms\n", name, ___bench_result_##id)
+#define BENCH_RESULT(id) ___bench_result_##id
 
 EC_KEY* create_key(int nid) {
 	EC_KEY *key;
@@ -45,13 +54,13 @@ unsigned char* get_secret(EC_KEY* key, const EC_POINT* peer_pub_key, size_t* sec
 	return secret;
 }
 
-struct s_msg {
+typedef struct {
 	int sender_id;
 	int recipient_id;
 	unsigned char* message; // 16 bytes
-};
+} s_msg;
 
-struct s_env {
+typedef struct {
 	EC_KEY* recipient_priv;
 	EC_POINT* recipient_pub;
 
@@ -59,13 +68,13 @@ struct s_env {
 	EC_POINT** senders_pub;
 	int senders_count;
 
-	struct s_msg* messages;
+	s_msg* messages;
 	int messages_count;
 	int* pertinent_msgs_indexes;
 	int pertinent_msgs_count;
-};
+} s_env;
 
-struct s_env setup_keys(int nid, int amount) {
+s_env setup_keys(int nid, int amount) {
 	EC_KEY** senders_priv = malloc(sizeof(EC_KEY*)*amount);
 	EC_POINT** senders_pub = malloc(sizeof(EC_POINT*)*amount);
 	for(int i = 0; i < amount; i++) {
@@ -75,7 +84,7 @@ struct s_env setup_keys(int nid, int amount) {
 	EC_KEY* recipient_priv = create_key(nid);
 	EC_POINT* recipient_pub = EC_KEY_get0_public_key(recipient_priv);
 
-	struct s_env env = {
+	s_env env = {
 		recipient_priv,
 		recipient_pub,
 		senders_priv,
@@ -90,11 +99,11 @@ struct s_env setup_keys(int nid, int amount) {
 	return env;
 }
 
-void free_msg(struct s_msg* msg) {
+void free_msg(s_msg* msg) {
 	free(msg->message);
 }
 
-void free_env(struct s_env* env) {
+void free_env(s_env* env) {
 	EC_KEY_free(env->recipient_priv);
 	for(int i = 0; i < env->senders_count; i++) {
 		EC_KEY_free(env->senders_priv[i]);
@@ -217,13 +226,13 @@ void generate_pertinent_indexes(int total, int pertinent, int* indexes) {
 	exit(1);
 }
 
-void create_messages(struct s_env* env) {
+void create_messages(s_env* env) {
 	// generate random indexes for pertinent messages
 	int* indexes = malloc(sizeof(int) * env->pertinent_msgs_count);
 	generate_pertinent_indexes(env->messages_count, env->pertinent_msgs_count, indexes);
 	env->pertinent_msgs_indexes = indexes;
 
-	struct s_msg* messages = malloc(sizeof(struct s_msg) * env->messages_count);
+	s_msg* messages = malloc(sizeof(s_msg) * env->messages_count);
 
 	// create messages
 	for(int i = 0; i < env->messages_count; i++) {
@@ -256,7 +265,7 @@ void create_messages(struct s_env* env) {
 	env->messages = messages;
 }
 
-void detect(struct s_env* env) {
+int detect(s_env* env) {
 	int error_counter = 0;
 	int cur_pert_index = 0;
 	for(int i = 0; i < env->messages_count; i++) {
@@ -282,43 +291,94 @@ void detect(struct s_env* env) {
 
 		free(message);
 	}
-	if(error_counter > 0)
-		printf("%d non-pertinent messages were mistakenly considered pertinent\n", error_counter);
+
+	return error_counter;
+}
+
+typedef struct {
+	double keygen;
+	double msggen;
+	double detect;
+	double fpcount;
+} s_bench_res;
+
+s_bench_res mean(s_bench_res* res, int count) {
+	s_bench_res sum = {0,0,0,0};
+	for(int i = 0; i < count; i++) {
+		sum.keygen += res[i].keygen;
+		sum.msggen += res[i].msggen;
+		sum.detect += res[i].detect;
+		sum.fpcount += res[i].fpcount;
+	}
+	sum.keygen /= count;
+	sum.msggen /= count;
+	sum.detect /= count;
+	sum.fpcount /= count;
+	return sum;
+}
+
+s_bench_res stdev(s_bench_res* res, int count) {
+	s_bench_res m = mean(res, count);
+	s_bench_res sum = {0,0,0,0};
+	for(int i = 0; i < count; i++) {
+		sum.keygen += (res[i].keygen - m.keygen) * (res[i].keygen - m.keygen);
+		sum.msggen += (res[i].msggen - m.msggen) * (res[i].msggen - m.msggen);
+		sum.detect += (res[i].detect - m.detect) * (res[i].detect - m.detect);
+		sum.fpcount += (res[i].fpcount - m.fpcount) * (res[i].fpcount - m.fpcount);
+	}
+	sum.keygen /= count;
+	sum.msggen /= count;
+	sum.detect /= count;
+	sum.fpcount /= count;
+	sum.keygen = sqrt(sum.keygen);
+	sum.msggen = sqrt(sum.msggen);
+	sum.detect = sqrt(sum.detect);
+	sum.fpcount = sqrt(sum.fpcount);
+	return sum;
 }
 
 #define BENCH(nid) bench(nid,#nid)
 void bench(int nid, char* curve_name) {
-	const int AGENTS = 1000;
-	const int MESSAGES = 500000;
-	const int PERTINENT = 100;
+	printf("BENCHMARKING   %d agents; %d msgs; %d pertinent   using   %s curve   %d iterations\n",
+	       TOTAL_SENDERS, TOTAL_MESSAGES, PERTINENT_MESSAGES, curve_name, BENCH_ITERATIONS);
 
-	printf("BENCHMARKING   %d agents; %d msgs; %d pertinent   using   %s curve\n", AGENTS, MESSAGES, PERTINENT, curve_name);
-	struct s_env env_temp = setup_keys(nid, 1); // key length
+	s_env env_temp = setup_keys(nid, 1); // key length
 	printf("Public key length: %d bytes\n", get_public_ley_length(env_temp.recipient_priv, env_temp.recipient_pub));
 	free_env(&env_temp);
 
-	setup_keys(nid, 10); // warmup
+	s_bench_res res[BENCH_ITERATIONS];
+	for(int i = 0; i < BENCH_ITERATIONS; i++) {
+		BENCH_ST(1);
 
-	BENCH_ST(1);
+			BENCH_ST(2);
+			s_env env = setup_keys(nid, TOTAL_SENDERS);
+			BENCH_END_SILENT(2);
 
-	BENCH_ST(2);
-	struct s_env env = setup_keys(nid, AGENTS);
-	BENCH_END(2, "keygen");
+			env.messages_count = TOTAL_MESSAGES;
+			env.pertinent_msgs_count = PERTINENT_MESSAGES;
+			BENCH_ST(3);
+			create_messages(&env);
+			BENCH_END_SILENT(3);
 
-	env.messages_count = MESSAGES;
-	env.pertinent_msgs_count = PERTINENT;
-	BENCH_ST(3);
-	create_messages(&env);
-	BENCH_END(3, "msggen");
+			BENCH_ST(4);
+			int error = detect(&env);
+			BENCH_END_SILENT(4);
 
-	BENCH_ST(4);
-	detect(&env);
-	BENCH_END(4, "detect");
+			s_bench_res iter_res = {BENCH_RESULT(2),BENCH_RESULT(3),BENCH_RESULT(4),(double)error};
+            res[i] = iter_res;
 
-	BENCH_END(1, " TOTAL");
+		BENCH_END_SILENT(1);
 
+		free_env(&env);
+	}
+
+	s_bench_res avg = mean(res, BENCH_ITERATIONS);
+	s_bench_res std = stdev(res, BENCH_ITERATIONS);
+	printf("Average keygen: %f ms ± %f ms\n", avg.keygen, std.keygen);
+	printf("Average msggen: %f ms ± %f ms\n", avg.msggen, std.msggen);
+	printf("Average detect: %f ms ± %f ms\n", avg.detect, std.detect);
+	printf("Average fpcount: %f ± %f\n", avg.fpcount, std.fpcount);
 	printf("\n");
-	free_env(&env);
 }
 
 int main(int argc, char *argv[]) {
