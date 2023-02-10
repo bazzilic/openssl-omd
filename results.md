@@ -1,80 +1,72 @@
 ```
-                                                         |              INTEL                 |                 M1                 |
-    CURVE   | PubKey Length | Total B/clue | Total Bytes | Detection time | Detection/message | Detection time | Detection/message |
- secp224r1  |   29 bytes    |   45 bytes   |  22.5 MiB   |   30'654 ms    |    0.0613 ms      |   24'926 ms    |    0.0613 ms      |
- sect113r1  |   16 bytes    |   32 bytes   |  16.0 MiB   |   43'876 ms    |    0.0878 ms      |   34'352 ms    |    0.0878 ms      |
- sect113r2  |   16 bytes    |   32 bytes   |  16.0 MiB   |   43'759 ms    |    0.0875 ms      |   34'407 ms    |    0.0875 ms      |
- prime256v1 |   33 bytes    |   49 bytes   |  24.5 MiB   |   25'742 ms    |    0.0515 ms      |   20'611 ms    |    0.0515 ms      |
+                                                   |              INTEL              |                M1               |
+    CURVE   | PubKey Lgth | Total B/clu | Total B  | Detection time  | Detection/msg | Detection time  | Detection/msg |
+ secp224r1  |  29 bytes   |  45 bytes   | 22.5 MiB | 30'562 ± 24  ms |   0.0611 ms   | 25'064 ± 316 ms |   0.0501 ms   |
+ sect113r1  |  16 bytes   |  32 bytes   | 16.0 MiB | 43'011 ± 287 ms |   0.086  ms   | 34'639 ± 436 ms |   0.0692 ms   |
+ sect113r2  |  16 bytes   |  32 bytes   | 16.0 MiB | 43'051 ± 312 ms |   0.0861 ms   | 34'579 ± 422 ms |   0.0691 ms   |
+ prime256v1 |  33 bytes   |  49 bytes   | 24.5 MiB | 25'708 ± 17  ms |   0.0514 ms   | 20'715 ± 351 ms |   0.0414 ms   |
 ```
 
 ## Intel CPU (3rd Gen Intel Xeon Ice Lake with AVX-512) – M6i AWS Instance
 
-```
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve
+```plaintext
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve   150 iterations
 Public key length: 29 bytes
-keygen done in 33.794000 ms
-msggen done in 30873.852000 ms
-6 non-pertinent messages were mistakenly considered pertinent
-detect done in 30654.769000 ms
- TOTAL done in 61562.472000 ms
+Average keygen: 33.112187 ms ± 0.310584 ms
+Average msggen: 30707.692807 ms ± 30.267664 ms
+Average detect: 30562.543233 ms ± 23.679402 ms
+Average fpcount: 6.953333 ± 3.099111
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve   150 iterations
 Public key length: 16 bytes
-keygen done in 98.669000 ms
-msggen done in 44076.187000 ms
-7 non-pertinent messages were mistakenly considered pertinent
-detect done in 43876.273000 ms
- TOTAL done in 88051.179000 ms
+Average keygen: 92.196807 ms ± 0.343168 ms
+Average msggen: 43184.507673 ms ± 366.205772 ms
+Average detect: 43011.505747 ms ± 286.878050 ms
+Average fpcount: 7.666667 ± 3.265306
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve   150 iterations
 Public key length: 16 bytes
-keygen done in 94.618000 ms
-msggen done in 43868.577000 ms
-7 non-pertinent messages were mistakenly considered pertinent
-detect done in 43759.466000 ms
- TOTAL done in 87722.706000 ms
+Average keygen: 92.108660 ms ± 0.235890 ms
+Average msggen: 43214.919260 ms ± 336.271473 ms
+Average detect: 43050.976540 ms ± 312.483930 ms
+Average fpcount: 7.540000 ± 3.172024
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve   150 iterations
 Public key length: 33 bytes
-keygen done in 19.129000 ms
-msggen done in 25833.072000 ms
-2 non-pertinent messages were mistakenly considered pertinent
-detect done in 25742.170000 ms
- TOTAL done in 51594.416000 ms
+Average keygen: 19.112727 ms ± 0.063738 ms
+Average msggen: 25817.312753 ms ± 23.923591 ms
+Average detect: 25708.575387 ms ± 17.522683 ms
+Average fpcount: 7.640000 ± 3.290957
 ```
 
- ## M1 Max Macbook Pro ARM64 CPU
+## M1 Max Macbook Pro ARM64 CPU
 
-```
- BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve
+```plaintext
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve   150 iterations
 Public key length: 29 bytes
-keygen done in 27.144000 ms
-msggen done in 25443.105000 ms
-2 non-pertinent messages were mistakenly considered pertinent
-detect done in 25283.865000 ms
- TOTAL done in 50754.169000 ms
+Average keygen: 27.897473 ms ± 0.914330 ms
+Average msggen: 25121.695340 ms ± 326.592272 ms
+Average detect: 25064.147513 ms ± 315.504736 ms
+Average fpcount: 7.446667 ± 3.387303
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve   150 iterations
 Public key length: 16 bytes
-keygen done in 73.990000 ms
-msggen done in 34683.205000 ms
-13 non-pertinent messages were mistakenly considered pertinent
-detect done in 34352.184000 ms
- TOTAL done in 69109.425000 ms
+Average keygen: 74.563787 ms ± 0.923962 ms
+Average msggen: 34795.896347 ms ± 486.864327 ms
+Average detect: 34639.369987 ms ± 435.774616 ms
+Average fpcount: 8.146667 ± 3.663126
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve   150 iterations
 Public key length: 16 bytes
-keygen done in 72.496000 ms
-msggen done in 34305.121000 ms
-13 non-pertinent messages were mistakenly considered pertinent
-detect done in 34407.827000 ms
- TOTAL done in 68785.485000 ms
+Average keygen: 74.354833 ms ± 0.889370 ms
+Average msggen: 34724.430200 ms ± 439.475611 ms
+Average detect: 34579.443780 ms ± 422.757861 ms
+Average fpcount: 7.713333 ± 3.088336
 
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve
+BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve   150 iterations
 Public key length: 33 bytes
-keygen done in 14.863000 ms
-msggen done in 20791.275000 ms
-7 non-pertinent messages were mistakenly considered pertinent
-detect done in 20611.341000 ms
- TOTAL done in 41417.511000 ms
+Average keygen: 16.443920 ms ± 0.301233 ms
+Average msggen: 20804.817187 ms ± 425.985744 ms
+Average detect: 20715.277453 ms ± 351.040008 ms
+Average fpcount: 7.260000 ± 3.161076
 ```
