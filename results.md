@@ -1,10 +1,10 @@
 ```
-                                                   |              INTEL              |                M1               |
-    CURVE   | PubKey Lgth | Total B/clu | Total B  | Detection time  | Detection/msg | Detection time  | Detection/msg |
- secp224r1  |  29 bytes   |  45 bytes   | 22.5 MiB | 30'562 ± 24  ms |   0.0611 ms   | 25'064 ± 316 ms |   0.0501 ms   |
- sect113r1  |  16 bytes   |  32 bytes   | 16.0 MiB | 43'011 ± 287 ms |   0.086  ms   | 34'639 ± 436 ms |   0.0692 ms   |
- sect113r2  |  16 bytes   |  32 bytes   | 16.0 MiB | 43'051 ± 312 ms |   0.0861 ms   | 34'579 ± 422 ms |   0.0691 ms   |
- prime256v1 |  33 bytes   |  49 bytes   | 24.5 MiB | 25'708 ± 17  ms |   0.0514 ms   | 20'715 ± 351 ms |   0.0414 ms   |
+                                                  |              INTEL              |                M1               |
+    CURVE   | PubKey Lgth | Total B/clu | Total B | Detection time  | Detection/msg | Detection time  | Detection/msg |
+ secp224r1  |  29 bytes   |  45 bytes   | 22.5 MB | 30'562 ± 24  ms |   0.0611 ms   | 25'064 ± 316 ms |   0.0501 ms   |
+ sect113r1  |  16 bytes   |  32 bytes   | 16.0 MB | 43'011 ± 287 ms |   0.086  ms   | 34'639 ± 436 ms |   0.0692 ms   |
+ sect113r2  |  16 bytes   |  32 bytes   | 16.0 MB | 43'051 ± 312 ms |   0.0861 ms   | 34'579 ± 422 ms |   0.0691 ms   |
+ prime256v1 |  33 bytes   |  49 bytes   | 24.5 MB | 25'708 ± 17  ms |   0.0514 ms   | 20'715 ± 351 ms |   0.0414 ms   |
 ```
 
 ## Intel CPU (3rd Gen Intel Xeon Ice Lake with AVX-512) – M6i AWS Instance
