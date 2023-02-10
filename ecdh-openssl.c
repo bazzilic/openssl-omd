@@ -376,7 +376,7 @@ void bench(int nid, char* curve_name) {
     s_bench_res std = stdev(res, BENCH_ITERATIONS);
     printf("Average keygen: %f ms ± %f ms\n", avg.keygen, std.keygen);
     printf("Average msggen: %f ms ± %f ms\n", avg.msggen, std.msggen);
-    printf("Average detect: %f ms ± %f ms\n", avg.detect, std.detect);
+    printf("Average detect: %f ms ± %f ms (%f per msg)\n", avg.detect, std.detect, avg.detect/(double)TOTAL_MESSAGES);
     printf("Average fpcount: %f ± %f\n", avg.fpcount, std.fpcount);
     printf("\n");
 }
