@@ -1,72 +1,70 @@
 ```
                                                   |              INTEL              |                M1               |
     CURVE   | PubKey Lgth | Total B/clu | Total B | Detection time  | Detection/msg | Detection time  | Detection/msg |
- secp224r1  |  29 bytes   |  45 bytes   | 22.5 MB | 30'562 ± 24  ms |   0.0611 ms   | 25'064 ± 316 ms |   0.0501 ms   |
- sect113r1  |  16 bytes   |  32 bytes   | 16.0 MB | 43'011 ± 287 ms |   0.086  ms   | 34'639 ± 436 ms |   0.0692 ms   |
- sect113r2  |  16 bytes   |  32 bytes   | 16.0 MB | 43'051 ± 312 ms |   0.0861 ms   | 34'579 ± 422 ms |   0.0691 ms   |
- prime256v1 |  33 bytes   |  49 bytes   | 24.5 MB | 25'708 ± 17  ms |   0.0514 ms   | 20'715 ± 351 ms |   0.0414 ms   |
+ secp224r1  |  29 bytes   |  45 bytes   | 22.5 MB | 30'571 ± 31  ms |   0.0611 ms   | 24'381 ± 71  ms |   0.0487 ms   |
+ sect113r1  |  16 bytes   |  32 bytes   | 16.0 MB | 42'921 ± 125 ms |   0.0858 ms   | 33'564 ± 126 ms |   0.0671 ms   |
+ sect113r2  |  16 bytes   |  32 bytes   | 16.0 MB | 42'931 ± 163 ms |   0.0858 ms   | 33'607 ± 102 ms |   0.0672 ms   |
+ prime256v1 |  33 bytes   |  49 bytes   | 24.5 MB | 25'705 ± 17  ms |   0.0514 ms   | 20'125 ± 55  ms |   0.0402 ms   |
 ```
 
 ## Intel CPU (3rd Gen Intel Xeon Ice Lake with AVX-512) – M6i AWS Instance
 
 ```plaintext
-BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve   150 iterations
-Public key length: 29 bytes
-Average keygen: 33.112187 ms ± 0.310584 ms
-Average msggen: 30707.692807 ms ± 30.267664 ms
-Average detect: 30562.543233 ms ± 23.679402 ms
-Average fpcount: 6.953333 ± 3.099111
+Average keygen: 33.107707 ms ± 0.297530 ms
+Average msggen: 30681.407267 ms ± 13.501815 ms
+Average detect: 30570.918287 ms ± 31.020218 ms (0.061142 per msg)
+Average fpcount: 7.820000 ± 3.521496
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve   150 iterations
 Public key length: 16 bytes
-Average keygen: 92.196807 ms ± 0.343168 ms
-Average msggen: 43184.507673 ms ± 366.205772 ms
-Average detect: 43011.505747 ms ± 286.878050 ms
-Average fpcount: 7.666667 ± 3.265306
+Average keygen: 92.102133 ms ± 0.381658 ms
+Average msggen: 43012.493667 ms ± 88.977694 ms
+Average detect: 42921.146580 ms ± 125.190539 ms (0.085842 per msg)
+Average fpcount: 7.533333 ± 3.395422
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve   150 iterations
 Public key length: 16 bytes
-Average keygen: 92.108660 ms ± 0.235890 ms
-Average msggen: 43214.919260 ms ± 336.271473 ms
-Average detect: 43050.976540 ms ± 312.483930 ms
-Average fpcount: 7.540000 ± 3.172024
+Average keygen: 92.064273 ms ± 0.147657 ms
+Average msggen: 42997.829127 ms ± 89.897008 ms
+Average detect: 42931.644267 ms ± 163.628695 ms (0.085863 per msg)
+Average fpcount: 7.526667 ± 3.726834
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve   150 iterations
 Public key length: 33 bytes
-Average keygen: 19.112727 ms ± 0.063738 ms
-Average msggen: 25817.312753 ms ± 23.923591 ms
-Average detect: 25708.575387 ms ± 17.522683 ms
-Average fpcount: 7.640000 ± 3.290957
+^[[B^[[AAverage keygen: 19.139227 ms ± 0.052493 ms
+Average msggen: 25835.174453 ms ± 19.753817 ms
+Average detect: 25705.980907 ms ± 17.585414 ms (0.051412 per msg)
+Average fpcount: 7.326667 ± 3.215580
 ```
 
-## M1 Max Macbook Pro ARM64 CPU
+## M1 Max ARM64 CPU – MacBook Pro
 
 ```plaintext
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_secp224r1 curve   150 iterations
 Public key length: 29 bytes
-Average keygen: 27.897473 ms ± 0.914330 ms
-Average msggen: 25121.695340 ms ± 326.592272 ms
-Average detect: 25064.147513 ms ± 315.504736 ms
-Average fpcount: 7.446667 ± 3.387303
+Average keygen: 25.125073 ms ± 0.200887 ms
+Average msggen: 24447.530353 ms ± 73.433398 ms
+Average detect: 24381.200707 ms ± 71.998493 ms (0.048762 per msg)
+Average fpcount: 7.773333 ± 3.777383
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r1 curve   150 iterations
 Public key length: 16 bytes
-Average keygen: 74.563787 ms ± 0.923962 ms
-Average msggen: 34795.896347 ms ± 486.864327 ms
-Average detect: 34639.369987 ms ± 435.774616 ms
-Average fpcount: 8.146667 ± 3.663126
+Average keygen: 70.755393 ms ± 0.391482 ms
+Average msggen: 33629.876960 ms ± 104.124172 ms
+Average detect: 33564.608873 ms ± 126.541040 ms (0.067129 per msg)
+Average fpcount: 7.226667 ± 3.419838
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_sect113r2 curve   150 iterations
 Public key length: 16 bytes
-Average keygen: 74.354833 ms ± 0.889370 ms
-Average msggen: 34724.430200 ms ± 439.475611 ms
-Average detect: 34579.443780 ms ± 422.757861 ms
-Average fpcount: 7.713333 ± 3.088336
+Average keygen: 70.727073 ms ± 0.307893 ms
+Average msggen: 33690.228527 ms ± 101.208111 ms
+Average detect: 33607.865313 ms ± 102.292264 ms (0.067216 per msg)
+Average fpcount: 7.426667 ± 3.293117
 
 BENCHMARKING   1000 agents; 500000 msgs; 100 pertinent   using   NID_X9_62_prime256v1 curve   150 iterations
 Public key length: 33 bytes
-Average keygen: 16.443920 ms ± 0.301233 ms
-Average msggen: 20804.817187 ms ± 425.985744 ms
-Average detect: 20715.277453 ms ± 351.040008 ms
-Average fpcount: 7.260000 ± 3.161076
+Average keygen: 14.046173 ms ± 0.077297 ms
+Average msggen: 20182.867500 ms ± 56.742144 ms
+Average detect: 20125.602473 ms ± 55.736033 ms (0.040251 per msg)
+Average fpcount: 7.453333 ± 2.996858
 ```
